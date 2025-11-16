@@ -1,15 +1,24 @@
 ---
-title: "Guth Analysis Code"
+title: "Analysis Report: Differences in Medical Exam Scores between Underepresented in Medicine Students and Non-Underepresented in Medicine Students"
 author: "Marin Haluza"
 date: "2025-11-15"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
-Setting Up Project Directory: CIDATools library was used to create the folders of this project. 
+Setting Up Project Directory: CIDATools library was used to create the folders of this project. All documentation was done through R Markdown.
 
-Importing data and creating mean OSCE scores for each domain:
+GitHub Repository Link: https://github.com/marinhaluza-web/BIOS6621-Final-Project-.git
+
+****Questions: Having some trouble getting my table 1 to print out correctly, do you have any tips?
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
 ```{r}
+#Importing Data + Creating Means for OSCE Scores
 urm_scores <- read.csv("C:/Users/marin/OneDrive/BIOS6621-Final-Project/DataRaw/BIOS6621_Guth_data.csv")
 
 urm_scores$mean_phys <- rowMeans(urm_scores[,c("P1SprBates_PhysExamScore", "P1FallBodySys_PhysExamScore", "P2FallRamos_PhysExamScore", "P2FallPayne_PhysExamScore", "P2SpringHyde_PhysExamScore", "P2SpringSnelling_PhysExamScore")], na.rm = TRUE)
@@ -21,9 +30,9 @@ urm_scores$mean_meddoc <- rowMeans(urm_scores[,c("P1SprBates_MedDocScore", "P2Fa
 
 ```
 
-Updating Variable Labels: 
-Libraries Used: dplyr
 ```{r}
+#Updating Variable Labels: 
+#Libraries Used: dplyr
 library(dplyr)
 urm_scores <- urm_scores %>%
   mutate(     
@@ -39,11 +48,12 @@ urm_scores <- urm_scores %>%
 
 ```
 
-Creating a table of baseline characteristics, and mean scores by URM Status.
-
-Libraries used: gtsummary
 ```{r}
+#Creating a table of baseline characteristics, and mean scores by URM Status.
+
+#Libraries used: gtsummary
 library (gtsummary)
+
 table_1 <- tbl_summary(urm_scores, by = URM, 
                        type = list(P2FallRamos_OralPresScore ~"continuous"),
                        missing = "ifany",
@@ -59,16 +69,16 @@ table_1 <- tbl_summary(urm_scores, by = URM,
                                                                            P2FallRamos_OralPresScore ~ "Oral Presentation OSCE Scores", 
                                                                            STEP1_ExamScore~ "Step 1 Exam Scores",
                                                                            STEP2CK_ExamScore ~ "Step 2 Exam Scores")) %>%
-  modify_caption("Table 1. Participant Characteristics by URM Status")
+  modify_caption("Participant Characteristics by URM Status")
 
 table_1
                                                                       
 ```
-T-Tests: USMLE Step Scores
-Hypothesis - Exploratory: Does Step Scores differ across URM Status.
+1. T-Tests: USMLE Step Scores
+Hypothesis - Exploratory: Do Step Scores differ across URM Status?
 
-Libraries Used: ggplot2
 ```{r}
+#Libraries Used: ggplot2
 #Step 1 Scores
 t.test(
   STEP1_ExamScore ~ URM,
@@ -106,19 +116,25 @@ ggplot(urm_scores, aes(x = URM, y = STEP2CK_ExamScore, fill = URM)) +
 
 ```
 
-Chi-Squared Analysis: Clerkship Scores
-Hypothesis - Exploratory: Do clerkship scores differ across URM Status.
+2. Chi-Squared Analysis: Clerkship Scores
+Hypothesis - Exploratory: Do clerkship scores differ across URM Status?
 ```{r}
 
 ```
 
-T-Tests: Mean OSCE scores for each domain (physical exam, communication exam, documentation exam, and oral presentation)
+3. T-Tests: Mean OSCE scores for each domain (physical exam, communication exam, documentation exam, and oral presentation)
 Hypothesis - Primary: Do mean OSCE scores differ by URM Status across domains?
 Adjustments: Bonferroni Adjusted P-Value= (4/0.05)=0.0125
 ```{r}
 
 ```
-      race_cat_desc = factor(race_cat_desc, 
-                             levels = c("American Indian or Alaska Native", "Asian", "Black or African American", "Other", "White", "Unkown"),
-                             labels = c("American Indian or Alaska Native", "Asian", "Black or African American", "Other", "White", "Missing"))
+
+Discussion of Results:
+
+Interpretation for OSCE Scores
+
+Interpretation for USMLE Scores
+
+Interpretation for Clerkship Scores
+
 
