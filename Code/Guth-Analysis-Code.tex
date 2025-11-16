@@ -1,0 +1,373 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{longtable}
+\usepackage{colortbl}
+\usepackage{array}
+\usepackage{anyfontsize}
+\usepackage{multirow}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Guth Analysis Code},
+  pdfauthor={Marin Haluza},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Guth Analysis Code}
+\author{Marin Haluza}
+\date{2025-11-15}
+
+\begin{document}
+\maketitle
+
+Setting Up Project Directory: CIDATools library was used to create the
+folders of this project.
+
+Importing data and creating mean OSCE scores for each domain:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{urm\_scores }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"C:/Users/marin/OneDrive/BIOS6621{-}Final{-}Project/DataRaw/BIOS6621\_Guth\_data.csv"}\NormalTok{)}
+
+\NormalTok{urm\_scores}\SpecialCharTok{$}\NormalTok{mean\_phys }\OtherTok{\textless{}{-}} \FunctionTok{rowMeans}\NormalTok{(urm\_scores[,}\FunctionTok{c}\NormalTok{(}\StringTok{"P1SprBates\_PhysExamScore"}\NormalTok{, }\StringTok{"P1FallBodySys\_PhysExamScore"}\NormalTok{, }\StringTok{"P2FallRamos\_PhysExamScore"}\NormalTok{, }\StringTok{"P2FallPayne\_PhysExamScore"}\NormalTok{, }\StringTok{"P2SpringHyde\_PhysExamScore"}\NormalTok{, }\StringTok{"P2SpringSnelling\_PhysExamScore"}\NormalTok{)], }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+
+\NormalTok{urm\_scores}\SpecialCharTok{$}\NormalTok{mean\_comm }\OtherTok{\textless{}{-}} \FunctionTok{rowMeans}\NormalTok{(urm\_scores[,}\FunctionTok{c}\NormalTok{(}\StringTok{"P1SprBates\_CommScore"}\NormalTok{, }\StringTok{"P2FallRamos\_CommScore"}\NormalTok{, }\StringTok{"P2FallPayne\_CommScore"}\NormalTok{, }\StringTok{"P2SpringHyde\_CommScore"}\NormalTok{, }\StringTok{"P2SpringSnelling\_CommScore"}\NormalTok{)], }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+
+\NormalTok{urm\_scores}\SpecialCharTok{$}\NormalTok{mean\_meddoc }\OtherTok{\textless{}{-}} \FunctionTok{rowMeans}\NormalTok{(urm\_scores[,}\FunctionTok{c}\NormalTok{(}\StringTok{"P1SprBates\_MedDocScore"}\NormalTok{, }\StringTok{"P2FallPayne\_MedDocScore"}\NormalTok{, }\StringTok{"P2SpringHyde\_MedDocScore"}\NormalTok{, }\StringTok{"P2SpringSnelling\_MedDocScore"}\NormalTok{)], }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Updating Variable Labels: Libraries Used: dplyr
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(dplyr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'dplyr'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{urm\_scores }\OtherTok{\textless{}{-}}\NormalTok{ urm\_scores }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(     }
+      \AttributeTok{URM =} \FunctionTok{factor}\NormalTok{(URM,}
+      \AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\StringTok{"0"}\NormalTok{, }\StringTok{"1"}\NormalTok{, }\StringTok{"3"}\NormalTok{),}
+      \AttributeTok{labels =} \FunctionTok{c}\NormalTok{(}\StringTok{"Not Underepresented in Medicine"}\NormalTok{, }\StringTok{"Underepresented in Medicine"}\NormalTok{, }\StringTok{"Unknown"}\NormalTok{)),}
+      \AttributeTok{gender =} \FunctionTok{factor}\NormalTok{(gender, }
+                      \AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\StringTok{"M"}\NormalTok{, }\StringTok{"F"}\NormalTok{, }\StringTok{"D"}\NormalTok{),}
+                      \AttributeTok{labels =} \FunctionTok{c}\NormalTok{(}\StringTok{"Male"}\NormalTok{, }\StringTok{"Female"}\NormalTok{, }\StringTok{"Declined"}\NormalTok{)),}
+          \AttributeTok{race\_cat\_desc =} \FunctionTok{trimws}\NormalTok{(race\_cat\_desc),   }\CommentTok{\# remove spaces}
+    \AttributeTok{race\_cat\_desc =} \FunctionTok{na\_if}\NormalTok{(race\_cat\_desc, }\StringTok{""}\NormalTok{),   }\CommentTok{\# blank → NA}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+Creating a table of baseline characteristics, and mean scores by URM
+Status.
+
+Libraries used: gtsummary
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{ (gtsummary)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'gtsummary' was built under R version 4.4.3
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{table\_1 }\OtherTok{\textless{}{-}} \FunctionTok{tbl\_summary}\NormalTok{(urm\_scores, }\AttributeTok{by =}\NormalTok{ URM, }
+                       \AttributeTok{type =} \FunctionTok{list}\NormalTok{(P2FallRamos\_OralPresScore }\SpecialCharTok{\textasciitilde{}}\StringTok{"continuous"}\NormalTok{),}
+                       \AttributeTok{missing =} \StringTok{"ifany"}\NormalTok{,}
+                      \AttributeTok{missing\_text =} \StringTok{"(Missing)"}\NormalTok{,}
+                       \AttributeTok{statistic =} \FunctionTok{list}\NormalTok{(}\FunctionTok{all\_continuous}\NormalTok{()}\SpecialCharTok{\textasciitilde{}}\StringTok{"\{mean\} (\{sd\})"}\NormalTok{), }\AttributeTok{include =} \FunctionTok{c}\NormalTok{(gender, race\_cat\_desc, mean\_phys, mean\_comm, }
+\NormalTok{                                                                                       mean\_meddoc, P2FallRamos\_OralPresScore, }
+\NormalTok{                                                                                       STEP1\_ExamScore, STEP2CK\_ExamScore ),}
+                                                              \AttributeTok{label =} \FunctionTok{list}\NormalTok{(gender}\SpecialCharTok{\textasciitilde{}}\StringTok{"Gender"}\NormalTok{,}
+\NormalTok{                                                                           race\_cat\_desc}\SpecialCharTok{\textasciitilde{}}\StringTok{"Race"}\NormalTok{,}
+\NormalTok{                                                                           mean\_phys}\SpecialCharTok{\textasciitilde{}} \StringTok{"Mean Physical Exam OSCE Scores"}\NormalTok{, }
+\NormalTok{                                                                           mean\_comm}\SpecialCharTok{\textasciitilde{}}\StringTok{"Mean Communication Exam OSCE Scores"}\NormalTok{,}
+\NormalTok{                                                                           mean\_meddoc}\SpecialCharTok{\textasciitilde{}}\StringTok{"Mean Medical Documentation Exam OSCE Scores"}\NormalTok{,}
+\NormalTok{                                                                           P2FallRamos\_OralPresScore }\SpecialCharTok{\textasciitilde{}} \StringTok{"Oral Presentation OSCE Scores"}\NormalTok{, }
+\NormalTok{                                                                           STEP1\_ExamScore}\SpecialCharTok{\textasciitilde{}} \StringTok{"Step 1 Exam Scores"}\NormalTok{,}
+\NormalTok{                                                                           STEP2CK\_ExamScore }\SpecialCharTok{\textasciitilde{}} \StringTok{"Step 2 Exam Scores"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{modify\_caption}\NormalTok{(}\StringTok{"Table 1. Participant Characteristics by URM Status"}\NormalTok{)}
+
+\NormalTok{table\_1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}[t]
+\caption{\label{tab:unnamed-chunk-3}Table 1. Participant Characteristics by URM Status} 
+\fontsize{12.0pt}{14.0pt}\selectfont
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lccc}
+\toprule
+\textbf{Characteristic} & \textbf{Not Underepresented in Medicine}  N = 132\textsuperscript{\textit{1}} & \textbf{Underepresented in Medicine}  N = 60\textsuperscript{\textit{1}} & \textbf{Unknown}  N = 7\textsuperscript{\textit{1}} \\ 
+\midrule\addlinespace[2.5pt]
+Gender &  &  &  \\ 
+    Male & 62 (47\%) & 31 (52\%) & 4 (57\%) \\ 
+    Female & 70 (53\%) & 29 (48\%) & 2 (29\%) \\ 
+    Declined & 0 (0\%) & 0 (0\%) & 1 (14\%) \\ 
+Race &  &  &  \\ 
+    American Indian or Alaska Native & 0 (0\%) & 8 (17\%) & 0 (NA\%) \\ 
+    Asian & 19 (15\%) & 13 (28\%) & 0 (NA\%) \\ 
+    Black or African American & 0 (0\%) & 12 (26\%) & 0 (NA\%) \\ 
+    Other & 6 (4.7\%) & 1 (2.1\%) & 0 (NA\%) \\ 
+    White & 104 (81\%) & 13 (28\%) & 0 (NA\%) \\ 
+    (Missing) & 3 & 13 & 7 \\ 
+Mean Physical Exam OSCE Scores & 90.5 (4.0) & 88.7 (5.3) & 91.8 (3.3) \\ 
+    (Missing) & 26 & 12 & 1 \\ 
+Mean Communication Exam OSCE Scores & 92.8 (4.6) & 91.6 (4.6) & 90.3 (5.0) \\ 
+    (Missing) & 26 & 12 & 1 \\ 
+Mean Medical Documentation Exam OSCE Scores & 92.5 (4.6) & 90.4 (5.8) & 89.1 (5.3) \\ 
+    (Missing) & 26 & 12 & 1 \\ 
+Oral Presentation OSCE Scores & 96.8 (5.8) & 97.1 (4.7) & 96.7 (5.2) \\ 
+    (Missing) & 26 & 14 & 1 \\ 
+Step 1 Exam Scores & 229 (21) & 219 (18) & 235 (10) \\ 
+Step 2 Exam Scores & 245 (14) & 237 (13) & 245 (8) \\ 
+    (Missing) & 0 & 1 & 0 \\ 
+\bottomrule
+\end{tabular*}
+\begin{minipage}{\linewidth}
+\textsuperscript{\textit{1}}n (\%); Mean (SD)\\
+\end{minipage}
+\end{table}
+
+T-Tests: USMLE Step Scores Hypothesis - Exploratory: Does Step Scores
+differ across URM Status.
+
+Libraries Used: ggplot2
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Step 1 Scores}
+\FunctionTok{t.test}\NormalTok{(}
+\NormalTok{  STEP1\_ExamScore }\SpecialCharTok{\textasciitilde{}}\NormalTok{ URM,}
+  \AttributeTok{data =} \FunctionTok{droplevels}\NormalTok{(}\FunctionTok{subset}\NormalTok{(urm\_scores, URM }\SpecialCharTok{!=} \StringTok{"Unknown"}\NormalTok{))}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Welch Two Sample t-test
+## 
+## data:  STEP1_ExamScore by URM
+## t = 3.4997, df = 133.08, p-value = 0.0006341
+## alternative hypothesis: true difference in means between group Not Underepresented in Medicine and group Underepresented in Medicine is not equal to 0
+## 95 percent confidence interval:
+##   4.398282 15.832021
+## sample estimates:
+## mean in group Not Underepresented in Medicine 
+##                                      229.1818 
+##     mean in group Underepresented in Medicine 
+##                                      219.0667
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Step 1 Visualization }
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'ggplot2' was built under R version 4.4.3
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(urm\_scores, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ URM, }\AttributeTok{y =}\NormalTok{ STEP1\_ExamScore, }\AttributeTok{fill =}\NormalTok{ URM)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{x =} \StringTok{"URM Status"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"STEP 1 Exam Score"}\NormalTok{,}
+    \AttributeTok{title =} \StringTok{"Distribution of STEP 1 Exam Scores by URM Status"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"none"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Guth-Analysis-Code_files/figure-latex/unnamed-chunk-4-1.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Step 2 Scores}
+\FunctionTok{t.test}\NormalTok{(}
+\NormalTok{  STEP2CK\_ExamScore }\SpecialCharTok{\textasciitilde{}}\NormalTok{ URM,}
+  \AttributeTok{data =} \FunctionTok{droplevels}\NormalTok{(}\FunctionTok{subset}\NormalTok{(urm\_scores, URM }\SpecialCharTok{!=} \StringTok{"Unknown"}\NormalTok{))}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Welch Two Sample t-test
+## 
+## data:  STEP2CK_ExamScore by URM
+## t = 3.9937, df = 119.97, p-value = 0.0001126
+## alternative hypothesis: true difference in means between group Not Underepresented in Medicine and group Underepresented in Medicine is not equal to 0
+## 95 percent confidence interval:
+##   4.146337 12.299734
+## sample estimates:
+## mean in group Not Underepresented in Medicine 
+##                                      245.4773 
+##     mean in group Underepresented in Medicine 
+##                                      237.2542
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Step 2 Visualization}
+\FunctionTok{ggplot}\NormalTok{(urm\_scores, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ URM, }\AttributeTok{y =}\NormalTok{ STEP2CK\_ExamScore, }\AttributeTok{fill =}\NormalTok{ URM)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{x =} \StringTok{"URM Status"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"STEP 2 Exam Score"}\NormalTok{,}
+    \AttributeTok{title =} \StringTok{"Distribution of STEP 2 Exam Scores by URM Status"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"none"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 1 row containing non-finite outside the scale range
+## (`stat_boxplot()`).
+\end{verbatim}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Guth-Analysis-Code_files/figure-latex/unnamed-chunk-4-2.pdf}}
+
+Chi-Squared Analysis: Clerkship Scores Hypothesis - Exploratory: Do
+clerkship scores differ across URM Status.
+
+T-Tests: Mean OSCE scores for each domain (physical exam, communication
+exam, documentation exam, and oral presentation) Hypothesis - Primary:
+Do mean OSCE scores differ by URM Status across domains? Adjustments:
+Bonferroni Adjusted P-Value= (4/0.05)=0.0125
+
+\begin{verbatim}
+  race_cat_desc = factor(race_cat_desc, 
+                         levels = c("American Indian or Alaska Native", "Asian", "Black or African American", "Other", "White", "Unkown"),
+                         labels = c("American Indian or Alaska Native", "Asian", "Black or African American", "Other", "White", "Missing"))
+\end{verbatim}
+
+\end{document}
