@@ -1,0 +1,367 @@
+---
+title: "Analysis Report: Differences in Medical Exam Scores between Underepresented in Medicine Students and Non-Underepresented in Medicine Students"
+author: "Marin Haluza"
+date: "2025-11-15"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE) #R-Markdown set up, in final write up, this prevents the invesitgator from seeing code or code messages
+```
+
+```{r}
+#Importing Data + Creating Means for OSCE Scores + Filtering out missing observations
+#libraries used: here, dplyr, flextable
+library(here)
+library(dplyr)
+
+urm_scores <- read.csv(here::here("DataRaw", "BIOS6621_Guth_data.csv")) #reads in data from project root
+
+urm_scores$mean_phys <- rowMeans(urm_scores[,c("P1SprBates_PhysExamScore", "P1FallBodySys_PhysExamScore", "P2FallRamos_PhysExamScore", 
+    "P2FallPayne_PhysExamScore","P2SpringHyde_PhysExamScore", "P2SpringSnelling_PhysExamScore")],  na.rm = TRUE) #creates means of physical exam scores into one variable per observation
+
+urm_scores$mean_comm <- rowMeans(urm_scores[,c("P1SprBates_CommScore", "P2FallRamos_CommScore", "P2FallPayne_CommScore", "P2SpringHyde_CommScore", "P2SpringSnelling_CommScore")], na.rm = TRUE) #creates means of communication exam scores into one variable per observation
+
+urm_scores$mean_meddoc <- rowMeans(urm_scores[,c("P1SprBates_MedDocScore", "P2FallPayne_MedDocScore", "P2SpringHyde_MedDocScore", "P2SpringSnelling_MedDocScore")], na.rm = TRUE) #creates means of medical documentation scores into one variable per observation
+
+#filter out observations missing > 60% of OSCE data
+osce_vars <- c("P1SprBates_PhysExamScore", "P1SprBates_CommScore",
+                      "P2FallRamos_PhysExamScore", "P1FallBodySys_PhysExamScore",
+                      "P2FallRamos_PhysExamScore","P2FallRamos_CommScore", 
+                      "P2FallRamos_OralPresScore", "P2FallPayne_PhysExamScore",
+                      "P2FallPayne_CommScore", "P2FallPayne_MedDocScore", "P2SpringHyde_PhysExamScore",
+                      "P2SpringHyde_CommScore", "P2SpringHyde_MedDocScore", 
+                      "P2SpringSnelling_PhysExamScore", "P2SpringSnelling_CommScore",
+                      "P2SpringSnelling_MedDocScore") #creates a list of the OSCE score variables that we want to filter by
+
+urm_scores <- urm_scores %>%
+  mutate(prop_missing_scores = rowMeans(is.na(across(all_of(osce_vars))))) %>%
+  filter(prop_missing_scores <= 0.60) %>%
+  select(-prop_missing_scores) #updates the data frame so that if an observation is missing 60% of OSCE scores, they get dropped from analysis
+
+#filter out variables missing > 60% of data
+prop_missing_var <- colMeans(is.na(urm_scores)) #calculates proportion of missingness for each variable
+urm_scores <- urm_scores[, prop_missing_var <= 0.60] #updates the urm_scores data frame
+
+#filter out unkown URM Status
+urm_scores <- urm_scores %>%
+  filter(!is.na(URM_AAMC) & URM != "3")
+
+#creating binary variable for clerkship grades
+clerk_vars <- names(urm_scores)[grepl("Final_Course_Grade", names(urm_scores))] #creates a list of variables that have "Final_Course_Grade"
+
+#Updating the variable
+urm_scores <- urm_scores %>%
+  mutate(
+    across(
+      all_of(clerk_vars),
+      ~ case_when(
+          .x %in% c(2, 3) ~ 1L,       # High Pass or Honors → 1
+          .x == 1         ~ 0L,       # Pass → 0
+          TRUE            ~ NA_integer_  # Fail or Pass w/ remediation → NA
+        )
+    )
+  )
+
+#Assigning sample size variables
+N_URM  <- sum(urm_scores$URM_AAMC == "1")
+N_non  <- sum(urm_scores$URM_AAMC == "0")
+```
+**Background**
+
+The purpose of this study is to investigate differences in medical school exam scores between underrepresented (URM) medical students and students who are not underrepresented in medicine (non-URM). Understanding these differences may facilitate understanding medical student populations and bridge any biases amongst exam scores. Because the data was collected as assessments were completed, this is a cross sectional study design. The primary outcome of interest is OSCE scores, while USMLE and clerkship scores are secondary, more exploratory, outcomes of interest.
+
+**Methods** 
+
+Using data from an observational, cross sectional study collected from medical students attending the University of Colorado Denver at Anschutz Medical School, an independent samples t-tests were used to investigate differences in mean OSCE scores in three different domains. All observations having less than 60% of the reported OSCE scores were omitted from analysis. Additionally, clerkship grades, USMLE Step Scores, and OSCE scores that were missing more than 60% of observations were dropped from analysis. Lastly, any observations missing URM status were dropped from analysis due to URM status being our primary predictor. The sample size is comprised of `r N_URM` URM students and `r N_non` non-URM students. Table 1 represents the baseline characteristics (measured in sample counts), mean OSCE scores, mean USMLE scores, and clerkship grades. Clerkship grades were grouped into *passing* and *high passing*. *High passing* grouping combines students who passed with honors with students who passed with high honors.
+
+Mean OSCE scores (graded on a continuous scale of 1 - 100) were aggregated across three different domains: physical exam scores, medical documentation scores, and communication scores. Because the data was collected over two years and domains were tested multiple times, each domain score was averaged into one mean domain score for each student. Oral presentation exam scores were only collected once and were thus omitted from analysis. Normality was not tested for the purpose of this analysis because the sample sizes were both greater than 30 in each group. In order to adjust for multiple comparisons, a Bonferroni Correction was applied to significance levels for this analysis with three comparison groups (p = 0.017) An independent samples t-test was conducted for the three domains and estimate statistics with p-values are reported. 
+
+In order to investigate differences amongst mean USMLE Step 1 and 2 Scores (graded on a continuous scale of 1 - 300) between URM status we will use an independent sample t-test to see if there is a difference amongst the two groups. This is an exploratory component of our analysis so reported p-values will not be adjusted and will be provided not as a conclusive interpretation, but rather as an overview of the sample. Significance levels were not adjusted and set to alpha = 0.05.
+
+For clerkship grades, we will use a Chi Squared analysis to see if there is any difference in scores between URM status. A chi Square analysis was chosen for the purposes of comparing categorical scores, rather than continous scores as seen in OSCE and Step scores. Since there was a substantial amount of missingness in some of the clerkship grades, we will only compare the final clerkship scores for variables that are not missing more than 60% of the observations. We will compare proportions between passing and high passing (a combined variable for passing with honors and passing with high honors) for the final clerkship scores. Because of the amount of comparisons being made, these results will be included only as an exploratory component to provide an overview of the sample. Significance levels were not adjusted and set to alpha = 0.05.
+
+**Setting Up Project Directory**: CIDATools library was used to create the folders of this project. All documentation was done through R Markdown.
+
+**GitHub Repository Link**: https://github.com/marinhaluza-web/BIOS6621-Final-Project-.git
+
+```{r}
+#Updating Variable Labels: 
+#Libraries Used: dplyr
+urm_scores <- urm_scores %>%
+  mutate(     
+      URM_AAMC = factor(URM_AAMC,
+      levels = c("0", "1"),
+      labels = c("Not Underepresented in Medicine", "Underepresented in Medicine")),
+      gender = factor(gender, 
+                      levels = c("M", "F"),
+                      labels = c("Male", "Female")),
+      across(all_of(clerk_vars), 
+             ~factor(.x, 
+                     levels = c(0,1),
+                     labels = c("Passing", "High Passing"))),
+          race_cat_desc = trimws(race_cat_desc),   # remove spaces
+    race_cat_desc = na_if(race_cat_desc, "")   # blank → NA
+  )
+
+```
+
+```{r using-fitflextable}
+#Creating a table of baseline characteristics, and mean scores by URM Status.
+
+#Libraries used: gtsummary
+library (gtsummary)
+library(flextable)
+
+FitFlextableToPage <- function (ft, pgwidth = 6.8) {  
+  ft_out <- ft %>% flextable::autofit()  
+  ft_out <- flextable::width(ft_out, width = dim(ft_out)$widths *                                
+                               pgwidth/(flextable_dim(ft_out)$widths))  
+  return(ft_out)
+}
+
+table_1 <- tbl_summary(urm_scores, by = URM_AAMC, 
+                       type = list(P2FallRamos_OralPresScore ~"continuous"),
+                       missing = "ifany",
+                      missing_text = "(Missing)",
+                       statistic = list(all_continuous()~"{mean} ({sd})"), include = c(gender, race_cat_desc, mean_phys, mean_comm, 
+                                                                                       mean_meddoc, P2FallRamos_OralPresScore, 
+                                                                                       STEP1_ExamScore, STEP2CK_ExamScore, all_of(clerk_vars) ),
+                                                              label = list(gender~"Gender",
+                                                                           race_cat_desc~"Race",
+                                                                           mean_phys~ "Mean Physical Exam OSCE Scores", 
+                                                                           mean_comm~"Mean Communication Exam OSCE Scores",
+                                                                           mean_meddoc~"Mean Medical Documentation Exam OSCE Scores",
+                                                                           P2FallRamos_OralPresScore ~ "Oral Presentation OSCE Scores", 
+                                                                           STEP1_ExamScore~ "Step 1 Exam Scores",
+                                                                           STEP2CK_ExamScore ~ "Step 2 Exam Scores", 
+                                                                           CPC_Final_Course_Grade~ "CPC Final Clerkship Grade", 
+                                                                           EC_Final_Course_Grade ~ "EC Final Clerkship Grade", 
+                                                                           HAC_Final_Course_Grade~"HAC Final Clerkship Grade", 
+                                                                           ICAC_Final_Course_Grade~"ICAC Final Clerkship Grade",
+                                                                           MSK_Final_Course_Grade~"MSK Final Clerkship Grade", 
+                                                                           NC_Final_Course_Grade~ "NC Final Clerkship Grade", 
+                                                                           OBG_Final_Course_Grade~"OBG Final Clerkship Grade", 
+                                                                           OPC_Final_Course_Grade~"OPC Final Clerkship Grade", 
+                                                                           PC_Final_Course_Grade~"PC Final Clerkship Grade")) %>%
+  modify_caption("Participant Characteristics by URM Status")
+
+table_sum <- table_1 %>% 
+  gtsummary::as_flex_table() %>% 
+  FitFlextableToPage()
+
+table_sum
+
+```                                                                      
+
+```{r}
+#T-Tests: USMLE Step Scores
+#Hypothesis: Mean USMLE Step Scores differ by URM Status.
+#Libraries Used: ggplot2, broom, dplyr
+
+#Step 1 Visualization 
+library(ggplot2)
+library(broom)
+library(knitr)
+
+step1 <- ggplot(urm_scores, aes(x = URM_AAMC, y = STEP1_ExamScore, fill = URM_AAMC)) +
+  geom_boxplot() +
+  labs(
+    x = "URM Status",
+    y = "STEP 1 Exam Score",
+    title = "Figure 1.STEP 1 Exam Scores by URM Status"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+#Step 2 Visualization
+step2 <- ggplot(urm_scores, aes(x = URM_AAMC, y = STEP2CK_ExamScore, fill = URM_AAMC)) +
+  geom_boxplot() +
+  labs(
+    x = "URM Status",
+    y = "STEP 2 Exam Score",
+    title = "Figure 2. STEP 2 Exam Scores by URM Status"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+p1+p2
+
+#T-Test Results
+step_tests <- list(
+  STEP1 = t.test(STEP1_ExamScore ~ URM_AAMC, data = droplevels(subset(urm_scores, URM_AAMC != "Unknown"))),
+  STEP2 = t.test(STEP2CK_ExamScore ~ URM_AAMC, data = droplevels(subset(urm_scores, URM_AAMC != "Unknown")))
+)
+
+step_table <- bind_rows(
+  tidy(step_tests$STEP1) %>% mutate(Outcome = "STEP 1 Exam Score"),
+  tidy(step_tests$STEP2) %>% mutate(Outcome = "STEP 2 Exam Score")
+) %>%
+  select(
+    Outcome,
+    estimate,           
+    statistic,            
+    p.value,
+    conf.low, conf.high
+  )
+
+#create in line values
+step1_diff <- abs(step_table$estimate[step_table$Outcome == "STEP 1 Exam Score"])
+step1_p    <- step_table$p.value[step_table$Outcome == "STEP 1 Exam Score"]
+
+step2_diff <- abs(step_table$estimate[step_table$Outcome == "STEP 2 Exam Score"])
+step2_p    <- step_table$p.value[step_table$Outcome == "STEP 2 Exam Score"]
+
+#Makes Table for Results
+kable(step_table, digits = 3, caption = "T-test Comparison of STEP Exam Scores by URM Status")
+
+```
+***Results for Independent Sample T-Tests for USMLE Scores***
+An exploratory independent sample t-tests for USMLE Step 1 and Step 2 scores was conducted as an exploratory analysis of the sample. Table 2 displays our results for this analysisStep 1 Scores demonstrated statistical significance when comparing non-URM students to URM students. On average, non-URM student's Step 1 scores were `r round(step1_diff,2)` points higher than URM students (p =  `r signif(step1_p,3)`). Similarly, Step 2 Exam Scores in non-URM students had a higher mean score by `r round(step2_diff,2)` points (p = `r signif(step2_p,3)`). These results suggest a statistical difference in USMLE Step 1 and Step 2 scores; however, they are only included to provide insight on the sample. Further research investigating differences in medical exam scores.These results may be limited by sample size differences between groups. Additionally, this is an observational study that cannot be conclusive of the general medical student population.
+
+```{r}
+#Chi-Squared Analysis: Final Clerkship Scores
+#Hypothesis - Exploratory: Do final clerkship scores differ across URM Status?
+library(broom)
+library(knitr)
+
+chi_results <- lapply(clerk_vars, function(var) {
+  tbl <- table(urm_scores[[var]], urm_scores$URM_AAMC)  # cross-tabulation
+  test <- chisq.test(tbl)
+  tidy(test) |>
+    mutate(Outcome = var)
+})
+
+chi_results <- do.call(rbind, chi_results)
+
+chi_results <- chi_results %>%
+  mutate(
+    Outcome = gsub("_Final_Course_Grade", "", Outcome),
+    Outcome = gsub("_", " ", Outcome)
+  )
+
+chi_results_table <- chi_results %>%
+  select(
+    Outcome,
+    statistic,
+    parameter,
+    p.value
+  ) %>%
+  rename(
+    "Chi-Square Statistic"= statistic, 
+    "df"= parameter, 
+    "P-Value" = p.value,
+    "Clerkship Test" = Outcome
+  )
+
+kable(
+  chi_results_table,
+  digits = 3,
+  caption = "Chi-square Tests Comparing Clerkship Final Course Grades by URM Status"
+)
+
+```
+***Results for Chi Square Analysis of Clerkship Scores***
+Because of the substantial amount of missing data amongst clerkship scores, these results aim to explore the study sample and provide insight rather than making conclusive statements about differences in clerkship scores between URM an non-URM students.
+
+Using a Chi Square Analysis, these results demonstrate differences in final clerkship course grades (passing versus high passing) by URM status. There was an observed statistically significant association in EC, MSK, OBG, and HAC final clerkship grades. These results indicate that final course grades differed by URM status in these clerkships for this sample. No statistical significant differences were found for CPC, ICAC, NC, OPC, and PC clerkship scores, suggesting that this sample did not have uniform differences across clerkship grades. The exploratory nature and differing results for this analysis indicates that further research may provide further insight on clerkship grade differences. 
+
+```{r}
+#T-Tests: Mean OSCE scores for each domain (physical exam, communication exam, documentation exam, and oral presentation)
+#Hypothesis - Primary: Do mean OSCE scores differ by URM Status across domains?
+#Adjustments: Bonferroni Adjusted P-Value= (4/0.05)=0.0125
+#Libraries used: ggplot2
+#Physical Exam - Graph
+library(ggplot2)
+library(knitr)
+ggplot(urm_scores, aes(x = URM_AAMC, y = mean_phys, fill = URM_AAMC)) +
+  geom_boxplot() +
+  labs(
+    x = "URM Status",
+    y = "Mean Physical Exam OSCE Scores",
+    title = "Figure 3. Physical Exam OSCE Scores by URM Status"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+#Communication Exam - Graph 
+ggplot(urm_scores, aes(x = URM_AAMC, y = mean_comm, fill = URM_AAMC)) +
+  geom_boxplot() +
+  labs(
+    x = "URM Status",
+    y = "Mean Communication Exam OSCE Scores",
+    title = "Figure 4. Communication OSCE Scores by URM Status"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+#Medical Documentation Exam - Graph
+ggplot(urm_scores, aes(x = URM_AAMC, y = mean_comm, fill = URM_AAMC)) +
+  geom_boxplot() +
+  labs(
+    x = "URM Status",
+    y = "Mean Medical Documentation Exam OSCE Scores",
+    title = "Figure 5. Medical Documentation OSCE Scores by URM Status"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+#T-Test Results
+osce_tests <- list(
+  PhysEx = t.test(mean_phys ~ URM_AAMC, data = droplevels(subset(urm_scores, URM_AAMC != "Unknown"))),
+  CommEx = t.test(mean_comm ~ URM_AAMC, data = droplevels(subset(urm_scores, URM_AAMC != "Unknown"))), 
+  MedEx = t.test(mean_meddoc ~ URM_AAMC, data = droplevels(subset(urm_scores, URM_AAMC != "Unknown")))
+)
+
+osce_table <- bind_rows(
+  tidy(osce_tests$PhysEx) %>% mutate(Outcome = "Mean Physical Exam Score"),
+  tidy(osce_tests$CommEx) %>% mutate(Outcome = "Mean Communication Exam Score"),
+  tidy(osce_tests$MedEx) %>% mutate(Outcome = "Mean Medical Documentation Exam Score")
+) %>%
+  select(
+    Outcome,
+    estimate,           
+    statistic,            
+    p.value,
+    conf.low, conf.high
+  ) 
+#Assigning Inline Variables
+phys_est  <- osce_table$estimate[osce_table$Outcome == "Mean Physical Exam Score"]
+phys_p    <- osce_table$p.value[osce_table$Outcome == "Mean Physical Exam Score"]
+phys_low  <- osce_table$conf.low[osce_table$Outcome == "Mean Physical Exam Score"]
+phys_high <- osce_table$conf.high[osce_table$Outcome == "Mean Physical Exam Score"]
+
+comm_est  <- osce_table$estimate[osce_table$Outcome == "Mean Communication Exam Score"]
+comm_p    <- osce_table$p.value[osce_table$Outcome == "Mean Communication Exam Score"]
+comm_low  <- osce_table$conf.low[osce_table$Outcome == "Mean Communication Exam Score"]
+comm_high <- osce_table$conf.high[osce_table$Outcome == "Mean Communication Exam Score"]
+
+med_est  <- osce_table$estimate[osce_table$Outcome == "Mean Medical Documentation Exam Score"]
+med_p    <- osce_table$p.value[osce_table$Outcome == "Mean Medical Documentation Exam Score"]
+med_low  <- osce_table$conf.low[osce_table$Outcome == "Mean Medical Documentation Exam Score"]
+med_high <- osce_table$conf.high[osce_table$Outcome == "Mean Medical Documentation Exam Score"]
+
+
+osce_table <- osce_table %>%
+  select(Outcome, estimate, statistic, p.value, conf.low, conf.high) %>%
+  rename(
+    "OSCE Domain"= Outcome, 
+    "Mean Difference" = estimate, 
+    "t value" = statistic, 
+    "P Value" = p.value
+  )
+
+kable(osce_table, digits = 3, caption = "T-test Comparison of OSCE Scores by URM Status")
+
+```
+
+***Results for Independent Sample T-Test of Mean OSCE Scores***
+Among the three domains that were analyzed (Physical Exam Scores, Communication Exam Scores, and Medical Documentation Exam Scores), we see no statistically significant differences between URM and non-URM students. Mean Physical exam scores in non-URM students were  points higher than URM students. Mean Communication exam scores differed by  points, while mean medical documentation exam scores differed by  points on average. 
+
+Overall, these non significant results indicate that there is no differences in OSCE scores and further research may be needed to provide more insight on differences between URM and non-URM students. 
+
+
+
