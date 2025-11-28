@@ -2,6 +2,7 @@
 title: "Differences in Medical Exam Scores between Underepresented in Medicine Students and Non-Underepresented in Medicine Students"
 author: "Marin Haluza"
 date: "2025-11-28"
+output_file: "Final Guth Report.pdf"
 output:
   pdf_document: default
   html_document:
