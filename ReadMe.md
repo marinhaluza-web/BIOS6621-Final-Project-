@@ -1,8 +1,8 @@
-**Project Name**:   
-**PI**:   
-**Analyst**:   
+**Project Name**:Medical OSCE Scores by URM Status   
+**PI**:Dr. Guth  
+**Analyst**: Marin Haluza 
 **CIDA drive Location**:   
-**GitHub Location**:   
+**GitHub Location**: https://github.com/marinhaluza-web/BIOS6621-Final-Project-.git  
 
 Details about the folders:
 
