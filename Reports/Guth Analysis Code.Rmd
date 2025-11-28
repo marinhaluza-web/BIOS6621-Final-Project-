@@ -2,7 +2,6 @@
 title: "Differences in Medical Exam Scores between Underepresented in Medicine Students and Non-Underepresented in Medicine Students"
 author: "Marin Haluza"
 date: "2025-11-28"
-output_file: "Final Guth Report.pdf"
 output:
   pdf_document: default
   html_document:
@@ -365,7 +364,7 @@ In order to investigate differences amongst mean USMLE Step 1 and 2 Scores (grad
 
 For clerkship grades, we will use a Chi Squared analysis to see if there is any difference in scores between URM status. A chi Square analysis was chosen for the purposes of comparing categorical scores, rather than continous scores as seen in OSCE and Step scores. Since there was a substantial amount of missingness in some of the clerkship grades, we will only compare the final clerkship scores for variables that are not missing more than 60% of the observations. We will compare proportions between passing and high passing (a combined variable for passing with honors and passing with high honors) for the final clerkship scores. EC and MSK Final Clerkship grades were dropped from analysis because every student received the same score. Because of the amount of comparisons being made, these results will be included only as an exploratory component to provide an overview of the sample. Significance levels were not adjusted and set to alpha = 0.05.
 
-**Analysis Software**: CIDATools library was used to create the folders of this project. All documentation was done through R Markdown. Analysis was performed in R version 4.4.2.
+**Analysis Software**: Analysis was performed in R version 4.4.2.
 
 
 ```{r}
